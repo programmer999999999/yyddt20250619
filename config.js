@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput2 = document.getElementById('imageUpload2');
     const fileError1 = document.getElementById('fileError1');
     const fileError2 = document.getElementById('fileError2');
-    const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
     const BUCKET_NAME = 'message_images';
 
     // Function to validate file size
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const file = fileInput.files[0];
             if (file.size > MAX_FILE_SIZE) {
                 if (errorElement) {
-                    errorElement.textContent = '文件大小不能超过 1MB';
+                    errorElement.textContent = '文件大小不能超过 2MB';
                 }
                 fileInput.value = ''; // Clear the file input
                 return false;
