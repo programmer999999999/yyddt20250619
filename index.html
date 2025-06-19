@@ -467,6 +467,15 @@
             });
         });
         
+        // Make message images clickable
+        document.addEventListener('click', function(e) {
+            const img = e.target.closest('.clickable-image');
+            if (img) {
+                const imgSrc = img.getAttribute('data-src') || img.src;
+                showImageInModal(imgSrc, img.alt || 'Message image');
+            }
+        });
+        
         // Make group images clickable as well
         document.querySelectorAll('.contact-group img').forEach(img => {
             img.style.cursor = 'pointer';
