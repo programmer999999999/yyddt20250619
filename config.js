@@ -13,39 +13,65 @@ window.supabase = supabaseClient;
 document.addEventListener('DOMContentLoaded', function() {
     const messageForm = document.getElementById('messageForm');
     const messagesList = document.getElementById('messagesList');
-    const fileInput = document.getElementById('imageUpload');
-    const fileError = document.getElementById('fileError');
+    const fileInput1 = document.getElementById('imageUpload1');
+    const fileInput2 = document.getElementById('imageUpload2');
+    const fileError1 = document.getElementById('fileError1');
+    const fileError2 = document.getElementById('fileError2');
     const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
     const BUCKET_NAME = 'message_images';
 
-    if (messageForm) {
-        // Handle file selection
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file && file.size > MAX_FILE_SIZE) {
-                fileError.textContent = '文件大小不能超过 1MB';
+    // Function to validate file size
+    function validateFileSize(fileInput, errorElement) {
+        if (fileInput && fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            if (file.size > MAX_FILE_SIZE) {
+                if (errorElement) {
+                    errorElement.textContent = '文件大小不能超过 1MB';
+                }
                 fileInput.value = ''; // Clear the file input
-            } else {
-                fileError.textContent = '';
+                return false;
+            } else if (errorElement) {
+                errorElement.textContent = '';
             }
-        });
+        }
+        return true;
+    }
+
+
+    if (messageForm) {
+        // Handle file selection for first image
+        if (fileInput1) {
+            fileInput1.addEventListener('change', function(e) {
+                validateFileSize(fileInput1, fileError1);
+            });
+        }
+
+        // Handle file selection for second image
+        if (fileInput2) {
+            fileInput2.addEventListener('change', function(e) {
+                validateFileSize(fileInput2, fileError2);
+            });
+        }
 
         // Handle form submission
         messageForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const username = document.getElementById('username').value.trim();
-            const message = document.getElementById('message').value.trim();
-            const file = fileInput.files[0];
             
-            if (!username || !message) {
-                alert('请输入昵称和留言内容');
+            if (!username) {
+                alert('请输入游戏昵称');
                 return;
             }
 
-            // Check file size again in case client-side validation was bypassed
-            if (file && file.size > MAX_FILE_SIZE) {
-                fileError.textContent = '文件大小不能超过 1MB';
+            // Check file sizes again in case client-side validation was bypassed
+            if (fileInput1 && fileInput1.files.length > 0 && fileInput1.files[0].size > MAX_FILE_SIZE) {
+                fileError1.textContent = '文件大小不能超过 1MB';
+                return;
+            }
+            
+            if (fileInput2 && fileInput2.files.length > 0 && fileInput2.files[0].size > MAX_FILE_SIZE) {
+                fileError2.textContent = '文件大小不能超过 1MB';
                 return;
             }
             
@@ -56,13 +82,23 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.textContent = '提交中...';
             
             try {
-                let imageUrl = null;
+                let imageUrl1 = null;
+                let imageUrl2 = null;
                 
-                // Upload image if selected
-                if (file) {
+                // Function to upload a single image
+                async function uploadImage(fileInputId) {
+                    const fileInput = document.getElementById(fileInputId);
+                    if (!fileInput.files || fileInput.files.length === 0) return null;
+                    
+                    const file = fileInput.files[0];
                     const fileExt = file.name.split('.').pop();
                     const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
                     const filePath = `${fileName}`;
+                    
+                    // Validate file size (1MB max)
+                    if (file.size > 1 * 1024 * 1024) {
+                        throw new Error(`图片 ${file.name} 大小不能超过1MB`);
+                    }
                     
                     const { data: uploadData, error: uploadError } = await supabase.storage
                         .from(BUCKET_NAME)
@@ -75,14 +111,26 @@ document.addEventListener('DOMContentLoaded', function() {
                         .from(BUCKET_NAME)
                         .getPublicUrl(filePath);
                         
-                    imageUrl = publicUrl;
+                    return publicUrl;
+                }
+                
+                // Upload both images in parallel
+                try {
+                    [imageUrl1, imageUrl2] = await Promise.all([
+                        uploadImage('imageUpload1'),
+                        uploadImage('imageUpload2')
+                    ]);
+                } catch (error) {
+                    alert(error.message);
+                    return;
                 }
                 
                 // Insert message to Supabase
                 const newMessage = { 
                     username: username,
-                    message: message,
-                    image_url: imageUrl,
+                    message: '', // Empty message since we removed the field
+                    image_url: imageUrl1,
+                    image_url2: imageUrl2,
                     created_at: new Date().toISOString(),
                     status: 0 // Default status is 0 (pending)
                 };
@@ -98,14 +146,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw error;
                 }
                 
-                // Clear the form
+                // Clear the form and error messages
                 messageForm.reset();
-                fileError.textContent = '';
+                if (fileError1) fileError1.textContent = '';
+                if (fileError2) fileError2.textContent = '';
                 
                 // If real-time subscription fails, manually add the message
                 if (data && data[0]) {
                     displayMessage(data[0]);
                 }
+                
+                // Refresh the page after a short delay to show the new message
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 100);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -223,13 +277,23 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="message-content">${message.message}</div>
         `;
         
-        // Add image if it exists
+        // Add images if they exist
         if (message.image_url) {
             messageHTML += `
-                <div class="message-image-container">
-                    <img src="${message.image_url}" alt="Uploaded image" class="message-image clickable-image" data-src="${message.image_url}">
-                </div>
-            `;
+                <div class="message-images-container">
+                    <div class="message-image-container">
+                        <img src="${message.image_url}" alt="Uploaded image 1" class="message-image clickable-image" data-src="${message.image_url}">
+                    </div>`;
+            
+            if (message.image_url2) {
+                messageHTML += `
+                    <div class="message-image-container">
+                        <img src="${message.image_url2}" alt="Uploaded image 2" class="message-image clickable-image" data-src="${message.image_url2}">
+                    </div>`;
+            }
+            
+            messageHTML += `
+                </div>`; // Close message-images-container
         }
         
         messageDiv.innerHTML = messageHTML;
