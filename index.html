@@ -390,19 +390,19 @@
                 <div class="message-form">
                     <form id="messageForm">
                         <div class="form-group">
-                            <label for="username">游戏昵称:</label>
+                            <label for="username">游戏昵称: <span class="required-asterisk">*</span></label>
                             <input type="text" id="username" name="username" maxlength="20" required
                                    oninput="this.value = this.value.slice(0, 20)"
                                    title="游戏昵称不能超过20个字符">
                         </div>
                         <br>
                         <div class="form-group">
-                            <label for="imageUpload1">上传战力截图 (可选):</label>
+                            <label for="imageUpload1">上传战力截图 (可选): <span class="required-asterisk">*</span></label>
                             <input type="file" id="imageUpload1" name="imageUpload1" accept="image/*">
                             <div id="fileError1" class="error-message"></div>
                         </div>
                         <div class="form-group">
-                            <label for="imageUpload2">上传任务截图 (可选):</label>
+                            <label for="imageUpload2">上传任务截图 (可选): <span class="required-asterisk">*</span></label>
                             <input type="file" id="imageUpload2" name="imageUpload2" accept="image/*">
                             <div id="fileError2" class="error-message"></div>
                         </div>
