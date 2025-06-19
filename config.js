@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const password = prompt('请输入密码:');
         if (password === 'fuzhu666') {
             try {
-                console.log('Updating message ID:', messageId, 'to status 1');
+                //console.log('Updating message ID:', messageId, 'to status 1');
                 
                 // First, verify the message exists and get current status
                 const { data: existingMessage, error: fetchError } = await supabase
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     .single();
                 
                 if (fetchError) throw new Error('无法获取消息: ' + fetchError.message);
-                console.log('Current message data:', existingMessage);
+                //console.log('Current message data:', existingMessage);
                 
                 // Update status in the database using rpc for better reliability
                 const { data, error } = await supabase.rpc('update_message_status', {
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     throw error;
                 }
                 
-                console.log('RPC update response:', data);
+                //console.log('RPC update response:', data);
                 
                 // Update the UI
                 const statusElement = document.querySelector(`[data-message-id="${messageId}"] .status-indicator`);
@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     statusElement.style.cursor = 'default';
                     statusElement.removeAttribute('onclick');
                     statusElement.title = '已审核';
-                    console.log('UI updated for message ID:', messageId);
+                    //console.log('UI updated for message ID:', messageId);
                 }
                 
                 // Verify the update with a small delay
@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (verifyError) {
                         console.error('Verification error:', verifyError);
                     } else {
-                        console.log('Verified status in database:', verifyData);
+                        //console.log('Verified status in database:', verifyData);
                         if (verifyData.status !== 1) {
                             console.error('WARNING: Database status was not updated!');
                         }
