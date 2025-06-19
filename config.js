@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (message.image_url) {
             messageHTML += `
                 <div class="message-image-container">
-                    <img src="${message.image_url}" alt="Uploaded image" class="message-image" onclick="window.open('${message.image_url}', '_blank')">
+                    <img src="${message.image_url}" alt="Uploaded image" class="message-image clickable-image" data-src="${message.image_url}">
                 </div>
             `;
         }
