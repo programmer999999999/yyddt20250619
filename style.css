@@ -638,6 +638,12 @@ input[type="file"] {
     margin-bottom: 15px;
 }
 
+.required-asterisk {
+    color: #ff4444;
+    margin-left: 4px;
+    font-weight: bold;
+}
+
 .form-group label {
     display: block;
     margin-bottom: 5px;
