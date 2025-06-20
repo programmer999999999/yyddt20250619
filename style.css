@@ -216,6 +216,62 @@ header h1 {
     box-shadow: 2px 2px 12px rgba(255, 165, 0, 0.3);
 }
 
+/* PVP Button Styles */
+.tab-button.pvp-button {
+    background: linear-gradient(45deg, #ff0000, #ff6b6b);
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    border: none;
+    position: relative;
+    overflow: hidden;
+    animation: pvpPulse 1.5s infinite;
+}
+
+.tab-button.pvp-button:hover {
+    background: linear-gradient(45deg, #ff3333, #ff8a8a);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+}
+
+.tab-button.pvp-button::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes pvpPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+    }
+}
+
+@keyframes shine {
+    0% {
+        left: -100%;
+    }
+    20%, 100% {
+        left: 100%;
+    }
+}
+
 .tab-content {
     display: none;
 }
