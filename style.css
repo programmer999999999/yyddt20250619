@@ -20,10 +20,32 @@ body {
     50% {
         background-position: 100% 50%;
     }
-
     100% {
         background-position: 0% 50%;
     }
+}
+
+/* PVP Tournament Image Styles */
+.pvp-image-container {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pvp-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.pvp-image:hover {
+    transform: scale(1.02);
 }
 
 header {
